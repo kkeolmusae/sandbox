@@ -1,13 +1,12 @@
 import fetch from "node-fetch";
-import * as QuickNode from "./QuickNode.js";
 
 const QUICK_NODE_URL = "https://docs-demo.btc.quiknode.pro";
-const GET_BLOCK_NODE_URL = "https://btc.getblock.io/4acc178d-a108-4a51-a2b8-17621ab08d54/mainnet/";
+const VERBOSITY = 2; // default: 1
 
-async function getBlockByHash(hash) {
+export async function getBlockByHash(hash) {
   const raw = JSON.stringify({
     method: "getblock",
-    params: [hash],
+    params: [hash, VERBOSITY],
   });
   return await fetch(QUICK_NODE_URL, {
     method: "POST",
@@ -16,11 +15,15 @@ async function getBlockByHash(hash) {
   })
     .then((response) => response.text())
     .then((result) => {
-      return result;
+      return JSON.parse(result).result;
+    })
+    .catch((err) => {
+      console.error(err);
+      throw err;
     });
 }
 
-async function getBlockHash(blockNumber) {
+export async function getBlockHash(blockNumber) {
   const raw = JSON.stringify({
     method: "getblockhash",
     params: [blockNumber],
@@ -32,27 +35,30 @@ async function getBlockHash(blockNumber) {
   })
     .then((response) => response.text())
     .then((result) => {
-      return result;
+      return JSON.parse(result).result;
+    })
+    .catch((err) => {
+      console.error(err);
+      throw err;
     });
 }
 
-async function getBlockCount() {
+export async function getBlockCount() {
   const raw = JSON.stringify({
     method: "getblockcount",
+    params: [],
   });
-  return await fetch(GET_BLOCK_NODE_URL, {
+  return await fetch(QUICK_NODE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: raw,
   })
     .then((response) => response.text())
     .then((result) => {
-      return result;
+      return JSON.parse(result).result;
+    })
+    .catch((err) => {
+      console.error(err);
+      throw err;
     });
 }
-
-(async () => {
-  const blockHash = await QuickNode.getBlockHash(803647);
-  const block = await QuickNode.getBlockByHash(blockHash);
-  console.log(block);
-})();
