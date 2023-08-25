@@ -1,6 +1,8 @@
 import fetch from "node-fetch";
+import * as dotenv from "dotenv";
+dotenv.config();
 
-const GET_BLOCK_NODE_URL = "https://btc.getblock.io/4acc178d-a108-4a51-a2b8-17621ab08d54/mainnet/";
+const GET_BLOCK_NODE_URL = `https://btc.getblock.io/${process.env.API_KEY}/mainnet/`;
 
 export async function getBlockCount() {
   const raw = JSON.stringify({
